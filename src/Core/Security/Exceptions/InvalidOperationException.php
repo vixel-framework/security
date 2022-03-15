@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-namespace Apex\Core\Security\Exception;
+namespace Apex\Core\Security\Exceptions;
 
 use RuntimeException;
 
