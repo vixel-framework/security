@@ -78,4 +78,36 @@ class AuthenticationController
     {
         return apex('templating')->render('authentication.forgot')
     }
+
+    /**
+     * Log the user out.
+     *
+     * @param \Psr\Http\Message\RequestInterface $request The incoming HTTP request.
+     *
+     * @return Psr\Http\Message\ResponseInterface Returns the HTTP response.
+     */
+    public function login(RequestInterface $request): ResponseInterface
+    {
+        if ($request->throttleTokensExhuasted()) {
+            throw new ThrottleTokensExhuastedException(apex('translation')->translate('too.many.login.attempts'));
+        }
+        $request->takeThrottleToken();
+        $input = $resqust->getInput();
+        apex('validation')->validateInput($input, config('authentication.login.validation.rules'));
+        apex('security')->login($input);
+        return apex('server')->rediectTo(config('authentication.redirect.dashboard'));
+    }
+
+    /**
+     * Log the user out.
+     *
+     * @param \Psr\Http\Message\RequestInterface $request The incoming HTTP request.
+     *
+     * @return Psr\Http\Message\ResponseInterface Returns the HTTP response.
+     */
+    public function logout(RequestInterface $request): ResponseInterface
+    {
+        apex('security')->logout();
+        return apex('server')->rediectTo(config('authentication.redirect.logout'));
+    }
 }
